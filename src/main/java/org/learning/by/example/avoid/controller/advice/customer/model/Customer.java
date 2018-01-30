@@ -13,15 +13,7 @@ public class Customer {
     return data;
   }
 
-  public void setData(final String data) {
-    this.data = data;
-  }
-
   public int getId() {
     return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
   }
 }
