@@ -92,19 +92,48 @@ $ mvnw spring-boot run
 To test the output when sending a correct customer id:
 
 ```bash
-$ curl
+$ curl -i http://localhost:8080/customer/1   
+HTTP/1.1 200 
+X-Application-Context: application
+Content-Type: application/json;charset=UTF-8
+Transfer-Encoding: chunked
+Date: Wed, 31 Jan 2018 09:33:01 GMT
+
+{
+  "data" : "super customer",
+  "id" : 1
+}
 ```
 
-To test the output when sending a invalidad customer id
+To test the output when sending a invalid customer id
 
 ```bash
-$ curl
+$curl -i http://localhost:8080/customer/-1
+ HTTP/1.1 400 
+ X-Application-Context: application
+ Content-Type: application/json;charset=UTF-8
+ Transfer-Encoding: chunked
+ Date: Wed, 31 Jan 2018 09:34:03 GMT
+ Connection: close
+ 
+ {
+   "message" : "bad parameters"
+ }                                                                                                                                                                                                                          
 ```
 
 To test the output when sending a not found customer id
 
 ```bash
-$ curl
+$ curl -i http://localhost:8080/customer/2 
+HTTP/1.1 404 
+X-Application-Context: application
+Content-Type: application/json;charset=UTF-8
+Transfer-Encoding: chunked
+Date: Wed, 31 Jan 2018 09:34:48 GMT
+
+{
+  "message" : "customer not found"
+}
 ```
 
 ## references
