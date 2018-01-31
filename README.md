@@ -7,65 +7,52 @@
 
 The idea behind that project is to check how we could avoid to use ControllerAdvice, and even checked exceptions when handling errors in our Microservices.
 
-Checked exception some times could like the implementation details of our components, and as well used to break the control flow, they could become a moderm GOTO.
+Checked exception some times could leek ke the implementation details of our components, and as well used to break the control flow.
 
-In order hand ControllerAdvice is the ultime GOTO that we should use only to handle really unchecked exceptions, something really wrong.
+In order hand ControllerAdvice is the ultimate GOTO that we should use only to handle really unchecked exceptions, something really wrong.
 
 The approach is to handle errors as part of our business logic.
 
 ## usage
 
-We have created one class to support this concept
+We have created one wrapper class to support this concept named `Result<type>`, this class has two creation methods.
+
+- `Result.create(object);` : That will create a wrapper containing the data to be returned.
+- `Result.error(object)` : That will create a wrapper containing an error.
+
+
+
+How to use this class is simple, for example in this example:
 
 ```java
-public class Result<type> {
+public Result get(int id) {
+  if (id == 1) return Result.create(new Customer(1, "super customer"));
+  else if (id == -1)
+    return Result.error(new BadParameters("bad parameters"));
+  else
+    return Result.error(new NotFound("customer not found"));
+}
+```
 
-  private final type value;
-  private final boolean hasError;
+For handling the result we could just use the methods `isError()` and `getData()`.
 
-  private Result(type type, boolean hasError) {
-    this.value = type;
-    this.hasError = hasError;
-  }
+```java
+Result result = operation();
 
-  public type getValue() {
-    return value;
-  }
-
-  public boolean isError() {
-    return hasError;
-  }
-
-  public static <type> Result<type> create(type object) {
-    return new Result<type>(object, false);
-  }
-
-  public static <type> Result<type> error(type object) {
-    return new Result<type>(object, true);
-  }
+if(result.isError()){
+  //do something with the error
+}else{
+  Customer customer = result.getValue();
 }
 
 ```
 
-How to use this class is simple
+Finally we use in our Controller a generic ResponseEntity we could return the wrapper value without needing to understand what contains.
+
+For example:
 
 ```java
-public class CustomerServiceImpl implements CustomerService {
 
-  @Override
-  public Result get(int id) {
-    if (id == 1) return Result.create(new Customer(1, "super customer"));
-    else if (id == -1)
-      return Result.error(new BadParameters("bad parameters"));
-    else
-      return Result.error(new NotFound("customer not found"));
-  }
-}
-```
-
-Then in our controller we could simply do:
-
-```java
 @RestController()
 public class CustomerController {
 
