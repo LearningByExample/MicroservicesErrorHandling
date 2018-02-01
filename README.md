@@ -22,7 +22,7 @@ We have created one wrapper class to support this concept named `Result<type>`, 
 
 
 
-How to use this class is simple, for example in this example:
+How to use this class is simple, for example:
 
 ```java
 public Result get(int id) {
@@ -47,40 +47,35 @@ if(result.isError()){
 
 ```
 
-Finally we use in our Controller a generic ResponseEntity we could return the wrapper value without needing to understand what contains.
+Finally we use in our mapping a generic ResponseEntity we could return the wrapper value without needing to understand what contains.
 
 For example:
 
 ```java
-
-@RestController()
-public class CustomerController {
-
-  private final CustomerService customerService;
-
-  public CustomerController(final CustomerService customerService) {
-    this.customerService = customerService;
-  }
-
-  private HttpStatus getStatus(final Result result){
-    if (result.isError()) {
-      if (result.getValue() instanceof NotFound)
-        return HttpStatus.NOT_FOUND;
-      else
-        return HttpStatus.BAD_REQUEST;
-    } else return HttpStatus.OK;
-  }
-
-  @GetMapping("/customer/{id}")
+@GetMapping("/customer/{id}")
   public ResponseEntity<?> get(@PathVariable() int id) {
-    final Result result = customerService.get(id);
-    final HttpStatus status = getStatus(result);
-
-    return new ResponseEntity<>(result.getValue(), status);
-  }
+  final Result result = customerService.get(id);
+  final HttpStatus status = getStatus(result);
+    
+  return new ResponseEntity<>(result.getValue(), status);
 }
 
 ```
+
+Since we may like to return different HTTP status, based on error contain we could create a helper that use the type of the class held on the wrapper.
+
+```java
+private HttpStatus getStatus(final Result result){
+  if (result.isError()) {
+    if (result.getValue() instanceof NotFound)
+      return HttpStatus.NOT_FOUND;
+    else
+      return HttpStatus.BAD_REQUEST;
+  } else return HttpStatus.OK;
+}
+
+```
+
 
 ## runing
 
@@ -135,7 +130,3 @@ Date: Wed, 31 Jan 2018 09:34:48 GMT
   "message" : "customer not found"
 }
 ```
-
-## references
-
---
