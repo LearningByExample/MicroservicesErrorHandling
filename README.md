@@ -36,7 +36,7 @@ public Result get(int id) {
     return Result.error(new NotFound("customer not found"));
 }
 ```
-`BadParameters` and `NotFound` are entities for our business logic that contain the desired information for handling these responses. 
+`BadParameters` and `NotFound` are entities for our business logic that contain the desired information for handling these responses.
 
 For handling the result we could just use the methods `isError()` and `getData()`.
 
@@ -60,7 +60,7 @@ For example:
   public ResponseEntity<?> get(@PathVariable() int id) {
   final Result result = customerService.get(id);
   final HttpStatus status = getStatus(result);
-    
+
   return new ResponseEntity<>(result.getValue(), status);
 }
 
@@ -91,8 +91,8 @@ $ mvnw spring-boot run
 To test the output when sending a correct customer id:
 
 ```bash
-$ curl -i http://localhost:8080/customer/1   
-HTTP/1.1 200 
+$ curl -i http://localhost:8080/customer/1
+HTTP/1.1 200
 X-Application-Context: application
 Content-Type: application/json;charset=UTF-8
 Transfer-Encoding: chunked
@@ -108,23 +108,23 @@ To test the output when sending a invalid customer id
 
 ```bash
 $curl -i http://localhost:8080/customer/-1
- HTTP/1.1 400 
+ HTTP/1.1 400
  X-Application-Context: application
  Content-Type: application/json;charset=UTF-8
  Transfer-Encoding: chunked
  Date: Wed, 31 Jan 2018 09:34:03 GMT
  Connection: close
- 
+
  {
    "message" : "bad parameters"
- }                                                                                                                                                                                                                          
+ }
 ```
 
 To test the output when sending a not found customer id
 
 ```bash
-$ curl -i http://localhost:8080/customer/2 
-HTTP/1.1 404 
+$ curl -i http://localhost:8080/customer/2
+HTTP/1.1 404
 X-Application-Context: application
 Content-Type: application/json;charset=UTF-8
 Transfer-Encoding: chunked
